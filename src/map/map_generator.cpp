@@ -15,7 +15,7 @@ RoomType pickRoomType() {
     else return EXIT;
 }
 
-Room* generateRoom(int depth) {
+Room* generateRoom(int depth, Room* parent = nullptr) {
     if (depth <= 0) return nullptr;
 
     string difficulties[] = {"EASY", "HARD"};
@@ -41,16 +41,22 @@ Room* generateRoom(int depth) {
     
     Room* room = createRoom(roomID++, type, difficulty, clueCount);
 
-    // TRAP and EXIT rooms don't lead anywhere
-    if (type == TRAP || type == EXIT) {
+    // TRAP rooms lead back to parent room
+    if (type == TRAP) {
+        room->next1 = parent;
         return room;
     }
 
-    room->next1 = generateRoom(--depth);
+    // EXIT rooms don't lead anywhere
+    if (type == EXIT) {
+        return room;
+    }
+
+    room->next1 = generateRoom(depth - 1, room);
 
     // EASY rooms get a second path
     if (difficulty == "EASY") {
-        room->next2 = generateRoom(--depth);
+        room->next2 = generateRoom(depth - 1, room);
     }
 
     return room;
