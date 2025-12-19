@@ -6,7 +6,7 @@ using namespace std;
 
 int roomID = 0;
 
-// Helper to pick a random room type
+// Helper to pick a random room type, should not be called directly
 // INTERMEDIATE = 70%, TRAP = 20%, EXIT = 10%
 RoomType pickRoomType() {
     int roll = rand() % 100;
@@ -15,6 +15,7 @@ RoomType pickRoomType() {
     else return EXIT;
 }
 
+// Helper to recursively generate rooms, this is only called by createRooms, do not call this directly
 Room* generateRoom(int depth, Room* parent = nullptr) {
     if (depth <= 0) return nullptr;
 
@@ -62,6 +63,9 @@ Room* generateRoom(int depth, Room* parent = nullptr) {
     return room;
 }
 
+// This function creates the initial rooms starting from the entrance
+// Use this function to intialize the "map" only ONCE at the beginning of the game
+// This function deletes any existing rooms starting from entrance before creating a new map ONTO the entrance pointer, do not give it a copy of the entrance and expect it to modify the original pointer
 void createRooms(Room* entrance, int depth) {
     if (depth == 0) return;    
     deleteAllRooms(entrance);
