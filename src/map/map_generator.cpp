@@ -7,12 +7,20 @@ using namespace std;
 int roomID = 0;
 
 // Helper to pick a random room type, should not be called directly
-// INTERMEDIATE = 70%, TRAP = 20%, EXIT = 10%
-RoomType pickRoomType() {
+// INTERMEDIATE = 80%, TRAP = 10%, EXIT = 10% (at high depth)
+// EXIT chance increases as depth decreases, reaching 100% at depth 1
+RoomType pickRoomType(int depth) {
+    if (depth <= 1) return EXIT;
+    
+    int exitChance = 100 / depth;
     int roll = rand() % 100;
-    if (roll < 70) return INTERMEDIATE;
-    else if (roll < 90) return TRAP;
-    else return EXIT;
+    if (roll < exitChance) {
+        return EXIT;
+    } else if (roll < exitChance + 80) {  // 80% of remaining goes to INTERMEDIATE
+        return INTERMEDIATE;
+    } else {
+        return TRAP; 
+    }
 }
 
 // Helper to recursively generate rooms, this is only called by createRooms, do not call this directly
@@ -22,7 +30,7 @@ Room* generateRoom(int depth, Room* parent = nullptr) {
     string difficulties[] = {"EASY", "HARD"};
     string difficulty = difficulties[rand() % 2];
     
-    RoomType type = pickRoomType();
+    RoomType type = pickRoomType(depth);
     int clueCount;
 
     // Determine clue count based on room type and difficulty, Easy rooms get 3, Hard rooms get 2, Others get none.
