@@ -1,5 +1,6 @@
 #include <string>
 #include <cstdlib>
+#include <iostream>
 #include <ctime>
 #include "../core/room.cpp"
 
@@ -42,9 +43,11 @@ Room* generateRoom(int depth, Room* parent = nullptr) {
     Room* room = createRoom(roomID++, type, difficulty);
 
     // TRAP rooms lead back to parent room
-    if (type == TRAP) {
+    if (type == TRAP && parent->difficulty != "HARD") {
         room->next1 = parent;
         return room;
+    } else if (type == TRAP && parent->difficulty == "HARD") {
+        room->next1 = generateRoom(depth - 1, room);
     }
 
     // EXIT rooms don't lead anywhere

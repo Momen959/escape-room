@@ -127,7 +127,17 @@ Puzzle hardBank[20] = {
     {"What has roots that nobody sees, is taller than trees, up up it goes, yet it never grows?", "mountain", "Very tall formation", 40, 2}
 };
 
-void fillRoomWithPuzzle(Room* room, Linkedlist& Easylist, Linkedlist& Hardlist) {
+Linkedlist Easylist;
+Linkedlist Hardlist;
+
+void setupPuzzles() {
+    for (int i = 0; i < 20; i++) {
+        Easylist.addPuzzle(easyBank[i]);
+        Hardlist.addPuzzle(hardBank[i]);
+    }
+}
+
+void fillRoomWithPuzzle(Room* room) {
     if (room == nullptr || room->visited) return;
 
     room->visited = true;
@@ -141,9 +151,6 @@ void fillRoomWithPuzzle(Room* room, Linkedlist& Easylist, Linkedlist& Hardlist) 
         int randomIndex = dist(gen);
         room->puzzle = Easylist.getRandomPuzzle(randomIndex);
     }
-
-    fillRoomWithPuzzle(room->next1, Easylist, Hardlist);
-    fillRoomWithPuzzle(room->next2, Easylist, Hardlist);
 }
 
 void solvePuzzle(Puzzle puzzle) {
@@ -183,14 +190,11 @@ int getUserPoints() {
     return userPoints;
 }
 
-void setupAllPuzzles(Room* entrance) {
-    Linkedlist Easy, Hard;
+// void setupAllPuzzles(Room* entrance) {
+//     Linkedlist Easy, Hard;
 
-    for(int i = 0; i < 20; i++) {
-        Easy.addPuzzle(easyBank[i]);
-        Hard.addPuzzle(hardBank[i]);
-    }
+    
 
-    fillRoomWithPuzzle(entrance, Easy, Hard);
-    resetVisitedFlags(entrance);
-}
+//     fillRoomWithPuzzle(entrance, Easy, Hard);
+//     resetVisitedFlags(entrance);
+// }

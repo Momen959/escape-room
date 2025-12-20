@@ -58,7 +58,7 @@ struct Room {
 
     // State flags
     bool visited;              // Used for traversal & memory cleanup
-    bool cleared;              // True if room puzzle already solved
+    bool cleared = false;              // True if room puzzle already solved
 };
 
 /******************************************************

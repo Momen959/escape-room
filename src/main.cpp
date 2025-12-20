@@ -13,7 +13,8 @@ void start() {
 
     Room* entrance = createRoom(-1, ENTRANCE, "");
     createRooms(entrance, depth);
-    setupAllPuzzles(entrance);
+    setupPuzzles();
+    // setupAllPuzzles(entrance);
   
 
     startGame(entrance);

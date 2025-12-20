@@ -128,8 +128,8 @@ Room* handleTrapRoom(Room* room) {
  * - For now, it assumes rooms are automatically cleared
  ******************************************************/
 Room* playRoom(Room* room) {
+    fillRoomWithPuzzle(room);
     displayRoomInfo(room);
-    
     // Handle EXIT room
     if (room->roomType == EXIT) {
         cout << "\nCONGRATULATIONS MY FRIND!" << endl;
