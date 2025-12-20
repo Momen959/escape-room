@@ -20,11 +20,14 @@ using namespace std;
  ******************************************************/
 
 /***********************
- * CLUE STRUCTURE
+ * PUZZLE STRUCTURE
  ***********************/
-struct Clue {
+struct Puzzle {
     string problem;   // The question/puzzle shown to the player
     string solution;  // The correct answer
+    string hint;
+    int points;
+    int attempts;
 };
 
 /***********************
@@ -50,9 +53,8 @@ struct Room {
     Room* next1;               // Always used
     Room* next2;               // Used ONLY for EASY rooms
 
-    // Clue data
-    Clue* clues;               // Dynamically allocated array of clues
-    int clueCount;             // Number of clues (depends on room type)
+    // Puzzle data
+    Puzzle puzzle;             // Single puzzle for this room
 
     // State flags
     bool visited;              // Used for traversal & memory cleanup
@@ -70,12 +72,11 @@ struct Room {
  * - id         → unique room ID
  * - type       → room type enum
  * - difficulty → "EASY" / "HARD" or empty for non-intermediate
- * - clueCount  → number of clues required in this room
  *
  * Returns:
  * - Pointer to newly created Room
  ******************************************************/
-Room* createRoom(int id, RoomType type, string difficulty, int clueCount) {
+Room* createRoom(int id, RoomType type, string difficulty) {
     Room* room = new Room;
 
     room->roomID = id;
@@ -86,9 +87,8 @@ Room* createRoom(int id, RoomType type, string difficulty, int clueCount) {
     room->next1 = nullptr;
     room->next2 = nullptr;
 
-    // Allocate clues dynamically
-    room->clueCount = clueCount;
-    room->clues = new Clue[clueCount];
+    // Initialize puzzle with empty values
+    room->puzzle = {"", "", "", 0, 0};
 
     // Initialize state
     room->visited = false;
@@ -140,9 +140,6 @@ void deleteAllRooms(Room* room) {
     deleteAllRooms(room->next1);
     deleteAllRooms(room->next2);
 
-    // Free clue memory
-    delete[] room->clues;
-
     // Free room itself
     delete room;
 }
@@ -166,12 +163,12 @@ Example:
 
 ======================================================
 
-==================== CLUE SYSTEM ======================
+==================== PUZZLE SYSTEM ======================
 File: src/puzzle/clues.cpp
 
-- Use room->clues[i].problem and solution
-- room->clueCount tells you how many clues to ask
-- Do NOT allocate or delete clues here
+- Use room->puzzle.problem and solution
+- Each room has exactly 1 puzzle
+- Do NOT allocate or delete puzzles here
 
 ======================================================
 

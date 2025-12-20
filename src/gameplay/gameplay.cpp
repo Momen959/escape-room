@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include "../core/room.cpp"
+#include "../puzzle/clues.cpp"
 
 using namespace std;
 
@@ -31,48 +32,6 @@ void displayRoomInfo(Room* room) {
     }
     
     cout << "========================================\n" << endl;
-}
-
-/******************************************************
- * FUNCTION: selectEntrance
- *
- * Purpose:
- * - Let player choose which entrance to use (1-4)
- * - Returns pointer to selected entrance room
- *
- * Parameters:
- * - entrances: Array of 4 entrance room pointers
- *
- * Returns:
- * - Pointer to selected entrance
- ******************************************************/
-Room* selectEntrance(Room* entrances[]) {
-    int choice;
-    
-    cout << "----( WELCOME TO THE ESCAPE ROOM )----" << endl;
-    
-    cout << "There are 4 entrances to choose from." << endl;
-    cout << "Select your entrance (1-4): ";
-    
-    while (true) {
-        cin >> choice;
-        
-        if (cin.fail()) {
-            cin.clear();
-            cin.ignore(10000, '\n');
-            cout << "Invalid input-Please enter a number (1-4): ";
-            continue;
-        }
-        
-        if (choice >= 1 && choice <= 4) {
-            break;
-        }
-        
-        cout << "Invalid choice-Please select 1, 2, 3, or 4: ";
-    }
-    
-    cout << "\nYou have chosen Entrance #" << choice << endl;
-    return entrances[choice - 1];
 }
 
 /******************************************************
@@ -201,8 +160,8 @@ Room* playRoom(Room* room) {
         // TODO: Call clue system here to solve room puzzles
         // For now, I will assume that the room is cleared automatically
         
-        cout << "You must solve the puzzles in this room to proceed." << endl;
-        
+        cout << "You must solve the puzzle in this room to proceed." << endl;
+        solvePuzzle(room->puzzle);
         // Mark room as cleared
         room->cleared = true;
         
@@ -236,10 +195,8 @@ Room* playRoom(Room* room) {
  * 2. Loop through rooms until EXIT is reached
  * 3. Each room is played via playRoom()
  ******************************************************/
-void startGame(Room* entrances[]) {
-    // Let player choose entrance
-    Room* currentRoom = selectEntrance(entrances);
-    
+void startGame(Room* entrance) {
+    Room* currentRoom = entrance;
     // Main game loop
     while (currentRoom != nullptr && currentRoom->roomType != EXIT) {
         currentRoom = playRoom(currentRoom);
@@ -250,6 +207,7 @@ void startGame(Room* entrances[]) {
         displayRoomInfo(currentRoom);
         cout << "\nCONGRATULATIONS!" << endl;
         cout << "You have successfully escaped the room!" << endl;
+        cout << "Your total points: " << getUserPoints() << endl;
     }
     
     cout << "\nTHANK U FOR PLAYING" << endl;

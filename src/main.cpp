@@ -1,5 +1,4 @@
 #include <iostream>
-#include "puzzle/clues.cpp"
 #include "gameplay/gameplay.cpp"
 #include "map/map_generator.cpp"
 
@@ -12,19 +11,12 @@ void start() {
     cin >> depth;
     cout << "Generating map..." << endl;
 
-    Room* entrance1 = createRoom(-1, ENTRANCE, "", 0);
-    Room* entrance2 = createRoom(-1, ENTRANCE, "", 0);
-    Room* entrance3 = createRoom(-1, ENTRANCE, "", 0);
-    Room* entrance4 = createRoom(-1, ENTRANCE, "", 0);
+    Room* entrance = createRoom(-1, ENTRANCE, "");
+    createRooms(entrance, depth);
+    setupAllPuzzles(entrance);
+  
 
-    Room* entrances[4] = {entrance1, entrance2, entrance3, entrance4};
-
-    for (auto & entrance : entrances) {
-        createRooms(entrance, depth);
-        setupAllPuzzles(entrance);
-    }
-
-    startGame(entrances);
+    startGame(entrance);
 }
 
 int main() {

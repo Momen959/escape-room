@@ -1,25 +1,32 @@
 #include <string>
 #include <cstdlib>
+#include <ctime>
 #include "../core/room.cpp"
 
 using namespace std;
 
 int roomID = 0;
+bool seeded = false;
 
 // Helper to pick a random room type, should not be called directly
-// INTERMEDIATE = 80%, TRAP = 10%, EXIT = 10% (at high depth)
+// INTERMEDIATE = ~85%, TRAP = 10%, EXIT = 5% (at high depth)
 // EXIT chance increases as depth decreases, reaching 100% at depth 1
 RoomType pickRoomType(int depth) {
     if (depth <= 1) return EXIT;
     
-    int exitChance = 100 / depth;
     int roll = rand() % 100;
+    // At higher depths: 85% INTERMEDIATE, 10% TRAP, 5% EXIT
+    // As depth decreases, EXIT chance grows
+    int exitChance = 5 + (5 - depth) * 5;  // depth 5+: 5%, depth 2: 20%
+    if (exitChance < 5) exitChance = 5;
+    if (exitChance > 30) exitChance = 30;
+    
     if (roll < exitChance) {
         return EXIT;
-    } else if (roll < exitChance + 80) {  // 80% of remaining goes to INTERMEDIATE
-        return INTERMEDIATE;
+    } else if (roll < exitChance + 10) {
+        return TRAP;
     } else {
-        return TRAP; 
+        return INTERMEDIATE;
     }
 }
 
@@ -31,24 +38,8 @@ Room* generateRoom(int depth, Room* parent = nullptr) {
     string difficulty = difficulties[rand() % 2];
     
     RoomType type = pickRoomType(depth);
-    int clueCount;
-
-    // Determine clue count based on room type and difficulty, Easy rooms get 3, Hard rooms get 2, Others get none.
-    switch (type) {
-        case INTERMEDIATE:
-            clueCount = (difficulty == "EASY") ? 2 : 3;
-            break;
-        case TRAP:
-            clueCount = 1;
-            break;
-        case EXIT:
-            clueCount = 0;
-            break;
-        default:
-            clueCount = 0;
-    }
     
-    Room* room = createRoom(roomID++, type, difficulty, clueCount);
+    Room* room = createRoom(roomID++, type, difficulty);
 
     // TRAP rooms lead back to parent room
     if (type == TRAP) {
@@ -75,9 +66,15 @@ Room* generateRoom(int depth, Room* parent = nullptr) {
 // Use this function to intialize the "map" only ONCE at the beginning of the game
 // This function deletes any existing rooms starting from entrance before creating a new map ONTO the entrance pointer, do not give it a copy of the entrance and expect it to modify the original pointer
 void createRooms(Room*& entrance, int depth) {
-    if (depth == 0) return;    
+    if (depth == 0) return;
+
+    if (!seeded) {
+        srand(static_cast<unsigned int>(time(nullptr)));
+        seeded = true;
+    }
+    
     deleteAllRooms(entrance);
-    entrance = createRoom(roomID++, ENTRANCE, "", 0);
+    entrance = createRoom(roomID++, ENTRANCE, "");
 
     // Entrance always has two paths
     entrance->next1 = generateRoom(depth);
