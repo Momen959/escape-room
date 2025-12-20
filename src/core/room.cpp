@@ -1,3 +1,6 @@
+#ifndef ROOM_CPP
+#define ROOM_CPP
+
 #include <iostream>
 #include <string>
 
@@ -192,3 +195,5 @@ File: src/main.cpp
 
 ======================================================
 */
+
+#endif

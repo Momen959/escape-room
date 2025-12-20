@@ -74,7 +74,7 @@ Room* generateRoom(int depth, Room* parent = nullptr) {
 // This function creates the initial rooms starting from the entrance
 // Use this function to intialize the "map" only ONCE at the beginning of the game
 // This function deletes any existing rooms starting from entrance before creating a new map ONTO the entrance pointer, do not give it a copy of the entrance and expect it to modify the original pointer
-void createRooms(Room* entrance, int depth) {
+void createRooms(Room*& entrance, int depth) {
     if (depth == 0) return;    
     deleteAllRooms(entrance);
     entrance = createRoom(roomID++, ENTRANCE, "", 0);
