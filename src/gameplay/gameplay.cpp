@@ -103,7 +103,7 @@ Room* handleTrapRoom(Room* room) {
     
     // The puzzle solving will be handled by the clues system
     // After solving, return to parent room
-    
+    solvePuzzle(room->puzzle);
     cout << "\nYou've been sent back to the previous room!" << endl;
     return room->next1;  // TRAP rooms point back to parent
 }
