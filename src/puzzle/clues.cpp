@@ -160,7 +160,7 @@ void solvePuzzle(Puzzle puzzle) {
     cin.ignore();
     cin >> answer;
     
-    while (answer != puzzle.solution && puzzle.attempts > 0) {
+    while (answer != puzzle.solution && puzzle.attempts > 1) {
         if (answer == "h") {
             cout << "Hint: " << puzzle.hint << endl;
             cin >> answer;
